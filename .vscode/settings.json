@@ -1,0 +1,10 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#600125",
+    "titleBar.activeBackground": "#870134",
+    "titleBar.activeForeground": "#FFFBFD"
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  }
+}
