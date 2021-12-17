@@ -1,28 +1,46 @@
+import { useEffect } from "react";
 import { useParams, Route, Link, useRouteMatch } from "react-router-dom";
 
 import HighlightedQuote from "../components/quotes/HighlightedQuote";
 import Comments from "../components/comments/Comments";
-
-const DUMMY_QUOTES = [
-  { id: "q1", author: "Max", text: "Learning React is fun!" },
-  { id: "q2", author: "Maximilian", text: "Learning React is great!" },
-];
+import useHttp from "../hooks/use-http";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
+import { getSingleQuote } from "../lib/api";
 
 const QuoteDetail = () => {
   const { path, url } = useRouteMatch();
   const { quoteId } = useParams();
 
-  const quote = DUMMY_QUOTES.find((quote) => quote.id === quoteId);
+  const {
+    sendRequest,
+    status,
+    data: loadedQuote,
+    error,
+  } = useHttp(getSingleQuote, true);
 
-  console.log(path, url);
+  useEffect(() => {
+    sendRequest(quoteId);
+  }, [sendRequest, quoteId]);
 
-  if (!quote) {
+  if (status === "pending") {
+    return (
+      <div className="centered">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="centered">{error}</p>;
+  }
+
+  if (!loadedQuote.text) {
     return <p>No quote found</p>;
   }
 
   return (
     <>
-      <HighlightedQuote text={quote.text} author={quote.author} />
+      <HighlightedQuote text={loadedQuote.text} author={loadedQuote.author} />
 
       <Route path={path} exact>
         <div className="centered">
